@@ -1,0 +1,98 @@
+# Instructions
+
+1) Create a connection in MongoDB - mongodb://localhost:27017/
+2) Create a database (name: payment) and a collection (name: accounts)
+3) Insert below test documents:
+        [{
+        "userId": "abc",
+        "accountId": "1234",
+        "type": "Savings",
+        "balance": 1000
+        },
+        {
+        "userId": "abc",
+        "accountId": "1235",
+        "type": "Current",
+        "balance": 10000
+        },
+        {
+        "userId": "xyz",
+        "accountId": "5678",
+        "type": "Savings",
+        "balance": 9000
+        },
+        {
+        "userId": "xyz",
+        "accountId": "5679",
+        "type": "BasicSavings",
+        "balance": 49000
+        }]
+
+1) Download the project from github
+2) Run command - npm install
+3) Run command - node app.js
+
+# To check REST API
+
+POST - http://localhost:3000/bank/transfer
+
+1) Body: -
+   Output: {
+    "errorCode": "VALERR",
+    "errorMessage": "Missing required field(s)"
+    }
+2) Body: {
+    "fromAccountId": "1235",
+    "toAccountId" : "5679",
+    "amount": 0
+    }
+   Output: {
+    "errorCode": "VALERR",
+    "errorMessage": "Amount must be a positive number"
+    }
+3) Body: {
+    "fromAccountId": "1235",
+    "toAccountId" : "1230",
+    "amount": 100
+    }
+    Output: {
+    "errorCode": "NOTFOUND",
+    "errorMessage": "Account is not found"
+    }
+4) Body: {
+    "fromAccountId": "1235",
+    "toAccountId" : "1234",
+    "amount": 100
+    }
+    Output: {
+    "errorCode": "SAMEUSER",
+    "errorMessage": "Transfer between accounts belonging to the same user is not allowed"
+    }
+5) Body: {
+    "fromAccountId": "1235",
+    "toAccountId" : "5679",
+    "amount": 100000
+    }
+    Output: {
+    "errorCode": "INSUFBAL",
+    "errorMessage": "Insufficient balance to make transfer"
+    }
+6) Body: {
+    "fromAccountId": "1235",
+    "toAccountId" : "5679",
+    "amount": 2000
+    }
+    Output: {
+    "errorCode": "MAXLIMIT",
+    "errorMessage": "The balance in the BasicSavings account type should never exceed Rs. 50,000"
+    }
+7) Body: {
+    "fromAccountId": "1235",
+    "toAccountId" : "5679",
+    "amount": 200
+    }
+    Output: {
+    "newSrcBalance": 9800,
+    "totalDestBalance": 58200,
+    "transferedAt": "2024-02-01T17:36:08.476Z"
+    }
